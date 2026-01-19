@@ -1,0 +1,15 @@
+spring:
+   application:
+     name: Admin-API
+
+
+   datasource:
+     url: jdbc:mysql://localhost:3306/soccioconnect
+     username: root
+     password: 12345
+     driver-class-name: com.mysql.cj.jdbc.Driver
+   jpa:
+     hibernate:
+       ddl-auto: update
+     show-sql: true
+     
