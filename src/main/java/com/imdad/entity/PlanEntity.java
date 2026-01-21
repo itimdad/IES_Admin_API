@@ -40,7 +40,9 @@ public class PlanEntity {
 	
 	@UpdateTimestamp
 	private LocalDate updatedDate;
-	
+
+
+	//fetch type lazy mean at it will not load at the time of its parent loading 
 	@ManyToOne(fetch = FetchType.LAZY )
 	@JoinColumn(name = "user_id" , nullable = false)
 	private UserEntity user;

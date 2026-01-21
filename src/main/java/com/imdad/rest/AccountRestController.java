@@ -1,4 +1,4 @@
-package om.imdad.rest;
+package com.imdad.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

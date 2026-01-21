@@ -1,8 +1,9 @@
-package om.imdad.rest;
+package com.imdad.rest;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PlanRestController {
+public class UserRestController {
 
+	
 }
