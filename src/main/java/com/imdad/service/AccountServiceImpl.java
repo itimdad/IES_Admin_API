@@ -2,6 +2,11 @@ package com.imdad.service;
 
 import java.util.List;
 
+import com.imdad.repository.UserRepository;
+import com.imdad.utils.AppConstants;
+import com.imdad.utils.EmailUtils;
+import com.imdad.utils.PwdUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.imdad.binding.UserAccountForm;
@@ -10,10 +15,41 @@ import com.imdad.entity.UserEntity;
 @Service
 public class AccountServiceImpl implements AccountService{
 
+	private final UserRepository userRepository;
+	private final PwdUtils pwdUtils;
+	private final EmailUtils emailUtils;
+
+	AccountServiceImpl(UserRepository userRepository, PwdUtils pwdUtils, EmailUtils emailUtils) {
+		this.userRepository = userRepository;
+		this.pwdUtils = pwdUtils;
+		this.emailUtils = emailUtils;
+	}
+
+
+
 	@Override
 	public boolean createAccount(UserAccountForm form) {
 		// TODO Auto-generated method stub
-		return false;
+		UserEntity  user = new UserEntity();
+
+		BeanUtils.copyProperties(form, user);
+
+		String password = pwdUtils.pwdGenerator();
+		user.setPwzd(password);
+
+		StringBuilder body = new StringBuilder();
+		body.append(AppConstants.EMAIL_BODY + password);
+
+		boolean isSend = false;
+		try {
+			emailUtils.sendMail(body.toString(), user.getEmail(), AppConstants.EMAIL_BODY);
+			isSend = true;
+		} catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        userRepository.save(user);
+
+		return isSend;
 	}
 
 	@Override

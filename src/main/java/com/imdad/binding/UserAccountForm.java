@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class UserAccountForm {
 	
-	private String name;
+	private String fullName;
 	private String email;
-	private Long phno;
+	private String phno;
 	private String gender;
 	private LocalDate dob;
 	private String userSSN;
