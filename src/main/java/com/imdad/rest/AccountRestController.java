@@ -27,7 +27,10 @@ public class AccountRestController {
 			@RequestBody UserAccountForm accountForm) {
 
 		boolean isCreated = accountService.createAccount(accountForm);
-		return new ResponseEntity<String>("success", HttpStatus.OK);
+		if(isCreated) {
+			return new ResponseEntity<String>("created successfully", HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("Email Already Exist", HttpStatus.IM_USED);
 		
 	}
 }

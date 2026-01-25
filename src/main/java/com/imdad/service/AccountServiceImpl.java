@@ -29,9 +29,14 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public boolean createAccount(UserAccountForm form) {
-		// TODO Auto-generated method stub
-		UserEntity  user = new UserEntity();
+		// check user exits or not if exist return user already Exist
+		UserEntity byEmail = userRepository.findByEmail(form.getEmail());
 
+		if(byEmail != null) {
+			return false;
+		}
+		UserEntity  user = new UserEntity();
+		//copying data into userEntity
 		BeanUtils.copyProperties(form, user);
 
 		String password = pwdUtils.pwdGenerator();
@@ -42,7 +47,7 @@ public class AccountServiceImpl implements AccountService{
 
 		boolean isSend = false;
 		try {
-			emailUtils.sendMail(body.toString(), user.getEmail(), AppConstants.EMAIL_BODY);
+			emailUtils.sendMail(AppConstants.EMAIL_SUBJECT, user.getEmail(), body.toString());
 			isSend = true;
 		} catch (Exception e) {
             throw new RuntimeException(e);
