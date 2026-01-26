@@ -1,4 +1,4 @@
-package com.imdad.utils;
+package com.imdad.constants;
 
 public class AppConstants {
 

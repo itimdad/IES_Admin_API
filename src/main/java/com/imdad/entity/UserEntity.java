@@ -38,12 +38,8 @@ public class UserEntity {
 	private LocalDate dob;
 	@Column(name = "ssn_num")
 	private String userSSN;
-	private String activeSwitch = "Y";
-	private String accountStatus = "LOCKED";
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id")
-	UserRolesEntity roles;
+	private String activeSwitch;
+	private String accountStatus;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<PlanEntity> plans;

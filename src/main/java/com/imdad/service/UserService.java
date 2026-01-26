@@ -5,9 +5,9 @@ import com.imdad.binding.LoginForm;
 
 public interface UserService {
 
-	public boolean login(LoginForm form);
+	public String login(LoginForm form);
 	
-	public boolean forgotPwd(String email);
+	public boolean recoverPwd(String email);
 	
 	public DashboardCards getDashboardData();
 }

@@ -2,6 +2,8 @@ package com.imdad.entity;
 
 import java.time.LocalDate;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Entity;
@@ -15,7 +17,8 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "IES_PLANS")
 public class PlanEntity {
 
