@@ -28,7 +28,7 @@ public class PlanEntity {
 	private String planName;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private String activeSwitch = "Y";
+	private String activeSwitch;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by", nullable = false)

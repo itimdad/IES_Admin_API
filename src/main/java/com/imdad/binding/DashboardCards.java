@@ -10,7 +10,7 @@ public class DashboardCards {
     private Long totalPlans;
     private Long approvedCitizens;
     private Long deniedCitizens;
-    private Long totalBenifitGiven;
+    private Double totalBenifitGiven;
 
 
 

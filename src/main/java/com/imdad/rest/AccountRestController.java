@@ -1,5 +1,6 @@
 package com.imdad.rest;
 
+import com.imdad.binding.UnlockAccForm;
 import com.imdad.entity.UserEntity;
 import com.imdad.service.AccountService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class AccountRestController {
 	}
 
 	@PostMapping(
-			value = "/cw-create",
+			value = "/user",
 			consumes = {"application/xml" , "application/json"}
 			)
 	public ResponseEntity<String> createUserAccount(
@@ -29,28 +30,54 @@ public class AccountRestController {
 
 		boolean isCreated = accountService.createAccount(accountForm);
 		if (isCreated) {
-			return new ResponseEntity<String>("created successfully", HttpStatus.OK);
+			return new ResponseEntity<String>("created successfully", HttpStatus.CREATED);
 		}
-		return new ResponseEntity<String>("Email Already Exist", HttpStatus.IM_USED);
+		return new ResponseEntity<String>("Email Already Exist", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@GetMapping("/cw-fetch")
-	public ResponseEntity<List<UserEntity>> getAllUsers(){
-		List<UserEntity> allCaseworkers =
-				accountService.fetchUserAccounts();
-		return new ResponseEntity<List<UserEntity>>(allCaseworkers, HttpStatus.OK);
-	}
+
 
 	@GetMapping(
-			value = "/cw-switch",
+			value = "/users",
+			produces = {"application/json", "application/xml"}
+	)
+	public ResponseEntity<List<UserAccountForm>> getAllUsers(){
+
+		List<UserAccountForm> userAccountForms =
+				accountService.fetchUserAccounts();
+
+		return new ResponseEntity<List<UserAccountForm>>(userAccountForms, HttpStatus.OK);
+	}
+
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<UserAccountForm> getUser(@PathVariable("userId") Integer userId) {
+		UserAccountForm userAccById = accountService.getUserAccById(userId);
+
+		return new ResponseEntity<>(userAccById, HttpStatus.OK);
+	}
+
+	@PutMapping(
+			value = "/user/{userId}/{status}",
 			consumes = {"application/json", "application/xml"}
 	)
-	public ResponseEntity<?> accountSwitch(@RequestParam Integer userId, @RequestParam String status) {
-		boolean isChanged = accountService.changeAccountStatus(userId, status);
+	public ResponseEntity<List<UserAccountForm>> accountStatusSwitch(@PathVariable Integer userId,
+												 @PathVariable String status) {
+		accountService.changeAccountStatus(userId, status);
 
-		if(isChanged) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
-		return new ResponseEntity<>("Something wrong", HttpStatus.OK);
+		List<UserAccountForm> userAccountForms = accountService.fetchUserAccounts();
+
+		return new ResponseEntity<>(userAccountForms, HttpStatus.OK);
+	}
+
+	@PostMapping(
+			value = "/unlock",
+			consumes = {"application/json", "application/xml"}
+	)
+	public ResponseEntity<String> unlockUserAccount(
+			@RequestBody UnlockAccForm unlockAccForm) {
+
+		String status = accountService.unlockAccount(unlockAccForm);
+
+		return new ResponseEntity<>(status, HttpStatus.OK);
 	}
 }

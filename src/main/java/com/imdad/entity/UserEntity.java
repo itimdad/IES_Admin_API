@@ -40,7 +40,7 @@ public class UserEntity {
 	private String userSSN;
 	private String activeSwitch;
 	private String accountStatus;
-	
+	private Integer roleId;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	List<PlanEntity> plans;
 	

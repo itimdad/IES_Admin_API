@@ -6,13 +6,14 @@ import com.imdad.binding.PlanForm;
 import com.imdad.binding.UserAccountForm;
 import com.imdad.entity.PlanEntity;
 
+
 public interface PlanService {
 
 	public boolean addPlan(PlanForm form);
 	
-	public List<UserAccountForm> fetchUserAccounts(PlanForm form);
+	public List<PlanForm> fetchPlans();
 	
-	public PlanForm getUserPlans();
+	public PlanForm fetchPlanById(Integer planId);
 
 	public String changePlanStatus(Integer planId, String status);
 }

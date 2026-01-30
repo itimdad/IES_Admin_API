@@ -117,7 +117,6 @@ public class AccountServiceImpl implements AccountService{
 			return "new and confirm password should be same";
 		}
 
-
 		//get user by email
 		UserEntity user = userRepository.findByEmail(unlockAccForm.getEmail());
 
