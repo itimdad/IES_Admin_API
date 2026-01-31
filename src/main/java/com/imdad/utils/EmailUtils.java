@@ -13,11 +13,9 @@ import java.time.LocalDateTime;
 @Component
 public class EmailUtils {
 
-    private final JavaMailSender javaMailSender;
+    @Autowired
+    private  JavaMailSender javaMailSender;
 
-    EmailUtils(JavaMailSender javaMailSender){
-        this.javaMailSender = javaMailSender;
-    }
 
     public boolean sendMail(String subject, String to, String body) throws Exception {
 

@@ -10,6 +10,7 @@ import com.imdad.constants.AppConstants;
 import com.imdad.utils.EmailUtils;
 import com.imdad.utils.PwdUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.imdad.binding.UserAccountForm;
@@ -18,17 +19,12 @@ import com.imdad.entity.UserEntity;
 @Service
 public class AccountServiceImpl implements AccountService{
 
-	private final UserRepository userRepository;
-	private final PwdUtils pwdUtils;
-	private final EmailUtils emailUtils;
-
-	AccountServiceImpl(UserRepository userRepository, PwdUtils pwdUtils, EmailUtils emailUtils) {
-		this.userRepository = userRepository;
-		this.pwdUtils = pwdUtils;
-		this.emailUtils = emailUtils;
-	}
-
-
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private  PwdUtils pwdUtils;
+	@Autowired
+	private  EmailUtils emailUtils;
 
 	@Override
 	public boolean createAccount(UserAccountForm form) {
@@ -44,7 +40,7 @@ public class AccountServiceImpl implements AccountService{
 
 		//generate and set password,
 		String password = pwdUtils.pwdGenerator();
-		user.setPwzd(password);
+		user.setPwd(password);
 
 		//set account status, and save into database
 		user.setActiveSwitch("Y");
@@ -121,9 +117,9 @@ public class AccountServiceImpl implements AccountService{
 		UserEntity user = userRepository.findByEmail(unlockAccForm.getEmail());
 
 		//compare password and account status if LOCKED then UNLOCKED it and change password
-		if(unlockAccForm.getOldPwd().equals(user.getPwzd())){
+		if(unlockAccForm.getOldPwd().equals(user.getPwd())){
 			user.setAccountStatus("UNLOCKED");
-			user.setPwzd(unlockAccForm.getNewPwd());
+			user.setPwd(unlockAccForm.getNewPwd());
 
 			userRepository.save(user);
 

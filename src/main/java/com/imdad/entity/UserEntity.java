@@ -32,7 +32,7 @@ public class UserEntity {
 	private Integer userId;
 	private String fullName;
 	private String email;
-	private String pwzd;
+	private String pwd;
 	private String phno;
 	private String gender;
 	private LocalDate dob;

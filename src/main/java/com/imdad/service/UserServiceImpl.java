@@ -2,33 +2,31 @@ package com.imdad.service;
 
 import com.imdad.binding.DashboardCards;
 import com.imdad.binding.LoginForm;
+import com.imdad.binding.UserAccountForm;
 import com.imdad.entity.EligEntity;
 import com.imdad.entity.UserEntity;
 import com.imdad.repository.EligRepository;
 import com.imdad.repository.PlanRepository;
 import com.imdad.repository.UserRepository;
 import com.imdad.utils.EmailUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
 
+	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
 	EmailUtils emailUtils;
+	@Autowired
 	PlanRepository planRepository;
 
 	EligRepository eligRepository;
-
-	UserServiceImpl(UserRepository userRepository,
-					EmailUtils emailUtils,
-					PlanRepository planRepository,
-					EligRepository eligRepository){
-		this.userRepository = userRepository;
-		this.emailUtils = emailUtils;
-		this.planRepository = planRepository;
-		this.eligRepository = eligRepository;
-	}
 
 	@Override
 	public String login(LoginForm form) {
@@ -93,6 +91,16 @@ public class UserServiceImpl implements UserService {
 		dashboardCards.setApprovedCitizens(approvedCnt);
 
 		return dashboardCards;
+	}
+
+	@Override
+	public UserAccountForm getUserByEmail(String email) {
+		UserEntity byEmail = userRepository.findByEmail(email);
+
+		UserAccountForm user = new UserAccountForm();
+
+		BeanUtils.copyProperties(byEmail, user);
+		return user;
 	}
 
 }

@@ -11,8 +11,7 @@ public class DashboardCards {
     private Long approvedCitizens;
     private Long deniedCitizens;
     private Double totalBenifitGiven;
-
-
+    private UserAccountForm user;
 
 
 }
