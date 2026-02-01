@@ -8,7 +8,7 @@ import com.imdad.entity.UserEntity;
 
 public interface AccountService {
 
-	public boolean createAccount(UserAccountForm form);
+	public boolean createAccount(UserAccountForm form) throws Exception;
 	
 	public List<UserAccountForm> fetchUserAccounts();
 

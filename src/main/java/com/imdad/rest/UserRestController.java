@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserRestController {
@@ -34,6 +31,18 @@ public class UserRestController {
         }
         logger.error("Login failed");
         return login;
+    }
+
+    @PostMapping("/forgot/{email}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String email)  {
+        logger.debug("Forgot password process started");
+        boolean status = userService.recoverPwd(email);
+        if(status) {
+            logger.info("Forgot password successful");
+            return  new ResponseEntity<>("Password reset successful", HttpStatus.OK);
+        }
+        logger.error("Forgot password failed");
+        return  new ResponseEntity<>("Password reset failed", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(

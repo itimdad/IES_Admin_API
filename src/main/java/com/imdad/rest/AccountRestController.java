@@ -26,10 +26,13 @@ public class AccountRestController {
 			consumes = {"application/xml" , "application/json"}
 			)
 	public ResponseEntity<String> createUserAccount(
-			@RequestBody UserAccountForm accountForm) {
+			@RequestBody UserAccountForm accountForm) throws Exception {
 
 		logger.debug("Create user account process");
 		boolean isCreated = accountService.createAccount(accountForm);
+
+
+
 		if (isCreated) {
 			logger.info("Account created successfully");
 			return new ResponseEntity<String>("created successfully", HttpStatus.CREATED);
@@ -57,16 +60,13 @@ public class AccountRestController {
 	}
 
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<UserAccountForm> getUser(@PathVariable("userId") Integer userId) {
+	public ResponseEntity<UserAccountForm> getUser(@PathVariable Integer userId) {
 		UserAccountForm userAccById = accountService.getUserAccById(userId);
 
 		return new ResponseEntity<>(userAccById, HttpStatus.OK);
 	}
 
-	@PutMapping(
-			value = "/user/{userId}/{status}",
-			consumes = {"application/json", "application/xml"}
-	)
+	@PutMapping("/user/{userId}/{status}")
 	public ResponseEntity<List<UserAccountForm>> accountStatusSwitch(@PathVariable Integer userId,
 												 @PathVariable String status) {
 		accountService.changeAccountStatus(userId, status);

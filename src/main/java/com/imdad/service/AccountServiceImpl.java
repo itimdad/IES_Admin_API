@@ -1,14 +1,20 @@
 package com.imdad.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.imdad.binding.UnlockAccForm;
 import com.imdad.repository.UserRepository;
 import com.imdad.constants.AppConstants;
 import com.imdad.utils.EmailUtils;
 import com.imdad.utils.PwdUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +32,13 @@ public class AccountServiceImpl implements AccountService{
 	@Autowired
 	private  EmailUtils emailUtils;
 
+	Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
+
 	@Override
-	public boolean createAccount(UserAccountForm form) {
-		// check user exits or not if exist return user already Exist
-//		UserEntity byEmail = userRepository.findByEmail(form.getEmail());
-//
-//		if(byEmail != null) {
-//			return false;
-//		}
+	public boolean createAccount(UserAccountForm form)  {
+		// TODO check user exits or not if exist return user already Exist
+
+        logger.debug("Account creating process started");
 		//copying data into userEntity
 		UserEntity  user = new UserEntity();
 		BeanUtils.copyProperties(form, user);
@@ -41,22 +46,26 @@ public class AccountServiceImpl implements AccountService{
 		//generate and set password,
 		String password = pwdUtils.pwdGenerator();
 		user.setPwd(password);
-
+		user.setRoleId(1);
 		//set account status, and save into database
 		user.setActiveSwitch("Y");
 		user.setAccountStatus("LOCKED");
+
 		userRepository.save(user);
+        logger.info("Account created successfully");
 
-		StringBuilder body = new StringBuilder();
-		body.append(AppConstants.EMAIL_BODY + password);
-
+		String subject = AppConstants.EMAIL_SUBJECT;
+		String body = readEmailBody("REG_EMAIL_BODY.txt", user);
+		String email = user.getEmail();
 		boolean isSend = false;
 		try {
 			//send email
-			emailUtils.sendMail(AppConstants.EMAIL_SUBJECT, user.getEmail(), body.toString());
+			emailUtils.sendMail(subject, email, body);
 			isSend = true;
-		} catch (Exception e) {
-            throw new RuntimeException(e);
+		}
+		catch (Exception e) {
+            logger.error("Failed to send email{}", e.getMessage(), e);
+
         }
 
 		return isSend;
@@ -81,6 +90,7 @@ public class AccountServiceImpl implements AccountService{
 	@Override
 	public UserAccountForm getUserAccById(Integer userId) {
 
+		logger.debug("Fetching user account by id ");
 		Optional<UserEntity> byId = userRepository.findById(userId);
 
 		if(byId.isPresent()) {
@@ -88,26 +98,30 @@ public class AccountServiceImpl implements AccountService{
 			UserAccountForm user = new UserAccountForm();
 			BeanUtils.copyProperties(entity, user);
 
+			logger.info("Fetching user account by id successfully");
 			return user;
 		}
-
+		logger.info("Fetching user account by id failed");
 		return null;
 	}
 
 	@Override
 	public String changeAccountStatus(Integer userId, String status) {
 		// Activate and deactivate account
+		logger.debug("Changing status of user account by id ");
 		int cnt = userRepository.updateAccountStatus(userId, status);
 
 		if(cnt > 0) {
-			return "status changed";
+			logger.info("Changing status of user account by id successfully");
+			return "success";
 		}
-
+		logger.error("Changing status of user account by id failed");
 		return "Failed to changed";
 	}
 
 	@Override
 	public String unlockAccount(UnlockAccForm unlockAccForm) {
+		logger.debug("Unlocking process user account by id ");
 		//check new password and  confirm password is same or not
 		if(!unlockAccForm.getNewPwd().equals(unlockAccForm.getConfirmPwd())) {
 			return "new and confirm password should be same";
@@ -122,11 +136,29 @@ public class AccountServiceImpl implements AccountService{
 			user.setPwd(unlockAccForm.getNewPwd());
 
 			userRepository.save(user);
-
+			logger.info("Account unlocked successfully");
 			return "Account unlocked";
 		}
-
+		logger.info("failed to unlock account");
 		return "Incorrect password recheck it";
+	}
+
+	private String readEmailBody(String fileName, UserEntity user) {
+		StringBuilder body = new StringBuilder();
+
+		try (Stream<String> lines = Files.lines(Paths.get(fileName))){
+
+			lines.forEach(line -> {
+				line = line.replace("${FNAME}", user.getFullName());
+				line = line.replace("${EMAIL}", user.getEmail());
+				line = line.replace("${TEMP_PWD}", user.getPwd());
+				body.append(line);
+			});
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return body.toString();
 	}
 
 }

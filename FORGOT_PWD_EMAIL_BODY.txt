@@ -1,0 +1,13 @@
+Hi ${FNAME}, <br/>
+<br/>
+
+Please find your password below <br/>
+
+<br/>
+
+Your Password : ${PWD} <br/>
+
+<br/>
+
+Thanks,<br/>
+SparrowKnight.<br/>
